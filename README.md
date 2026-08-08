@@ -17,13 +17,13 @@ The implemented functionality is limited to necessary minimum.
 For development, install the package in editable mode:
 
 ```bash
-python -m pip install -e .
+pip install -e .
 ```
 
 For a regular installation:
 
 ```bash
-python -m pip install .
+pip install .
 ```
 
 
