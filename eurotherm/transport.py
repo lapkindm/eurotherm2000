@@ -88,16 +88,18 @@ class ModbusTransport:
     def __enter__(self):
         self.open()
         return self
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
     def open(self):
-        self.instrument.serial.open()
-    
-    def close(self):
-        self.instrument.serial.close()
-    
+        """
+        Open the serial port (no-op if it is already open).
+        """
+
+        if not self.instrument.serial.is_open:
+            self.instrument.serial.open()
+
     # ------------------------------------------------------------------
     # Internal helper
     # ------------------------------------------------------------------
@@ -277,6 +279,14 @@ class ModbusTransport:
     # ------------------------------------------------------------------
     # Properties
     # ------------------------------------------------------------------
+
+    @property
+    def close_after_each_call(self) -> bool:
+        return self.instrument.close_port_after_each_call
+
+    @close_after_each_call.setter
+    def close_after_each_call(self, value: bool):
+        self.instrument.close_port_after_each_call = value
 
     @property
     def address(self) -> int:

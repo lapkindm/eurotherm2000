@@ -34,6 +34,7 @@ class Eurotherm3508(EurothermBase):
         baudrate=19200,
         parity="N",
         timeout=1.0,
+        keep_open=False,
     ):
         super().__init__(
             port=port,
@@ -41,6 +42,7 @@ class Eurotherm3508(EurothermBase):
             baudrate=baudrate,
             parity=parity,
             timeout=timeout,
+            keep_open=keep_open,
         )
     
 
@@ -97,7 +99,7 @@ class Eurotherm3508(EurothermBase):
 
     def identify(self):
         return {
-            "model": "Eurotherm 2408",
+            "model": "Eurotherm 3508",
             "port": self.port,
             "address": self.address,
         }

@@ -31,7 +31,10 @@ class EurothermBase(ABC):
         baudrate: int = 9600,
         parity: str = "N",
         timeout: float = 1.0,
+        keep_open: bool = False,
     ):
+
+        self.keep_open = keep_open
 
         self.transport = ModbusTransport(
             port=port,
@@ -39,15 +42,8 @@ class EurothermBase(ABC):
             baudrate=baudrate,
             parity=parity,
             timeout=timeout,
+            close_after_each_call=not keep_open,
         )
-
-
-    def __enter__(self):
-        self.transport.open()
-        return self
-    
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.transport.close()
 
     # ------------------------------------------------------------------
     # Connection information
@@ -189,14 +185,27 @@ class EurothermBase(ABC):
     # Resource management
     # ------------------------------------------------------------------
 
+    def open(self):
+        """
+        Open the serial port and keep it open until close() is called.
+        """
+
+        self.transport.close_after_each_call = False
+        self.transport.open()
+
     def close(self):
         """
-        Close the underlying transport.
+        Close the serial port.
+
+        Unless the controller was created with ``keep_open=True``, the
+        port is again opened and closed for each Modbus transaction.
         """
 
         self.transport.close()
+        self.transport.close_after_each_call = not self.keep_open
 
     def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
